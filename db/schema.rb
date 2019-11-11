@@ -10,10 +10,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_11_193703) do
+ActiveRecord::Schema.define(version: 2019_11_11_194817) do
+
+  create_table "encounters", force: :cascade do |t|
+    t.integer "player_id"
+    t.integer "room_id"
+    t.integer "choice"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "players", force: :cascade do |t|
+    t.integer "max_hp"
+    t.integer "current_hp"
     t.integer "affinity"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "rooms", force: :cascade do |t|
+    t.integer "number"
+    t.string "room_type"
+    t.integer "enemy_hp"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
