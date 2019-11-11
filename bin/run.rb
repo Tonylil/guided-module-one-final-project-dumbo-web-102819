@@ -10,6 +10,13 @@ p1 = Player.new({affinity: 12, max_hp: 10, current_hp: 5})
 
 game = Game.new(p1)
 
-game.dungeon_loop
+#game.dungeon_loop
+
+prompt = TTY::Prompt.new
+a1 = "Attack"
+a2 = "Defend"
+a3 = "Flee"
+a4 = ["Attack", "Defend", "Flee"]
+testa = prompt.select("What do you do?", a4)
 
 binding.pry
