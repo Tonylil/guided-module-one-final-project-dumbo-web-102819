@@ -32,19 +32,20 @@ class Game
 		valid_input = false
 
 		while(!valid_input)
-			puts "You are in room ___. Which direction you want to move?"
-			puts "1) North"
-			puts "2) East"
-			puts "3) South"
-			puts "4) West"
+			direction = selection("You are in room ______. Which direction would you like to choose?", ["North", "East", "South", "West"])
+			# puts "You are in room ___. Which direction you want to move?"
+			# puts "1) North"
+			# puts "2) East"
+			# puts "3) South"
+			# puts "4) West"
 
-			direction = gets.chomp.to_i
+			# direction = gets.chomp.to_i
 
 			clear_screen
 
 			#Making sure the choice is valid
 			case direction 
-			when 1..4
+			when "North", "East", "South", "West"
 				valid_input = true
 			else
 				puts "Your Input is invalid, please enter again."
@@ -59,26 +60,27 @@ class Game
 
 			valid_input = false
 			while(!valid_input)
-				puts "Your HP: #{@player.current_hp}. Enemy HP: #{enemy.enemy_hp}" 
-				puts "What do you want to do?"
-				puts "1) Attack"
-				puts "2) Defend"
-				puts "3) Run"
+				choice = selection("Your HP: #{@player.current_hp}. Enemy HP: #{enemy.enemy_hp}.", ["Attack", "Defend", "Run"])
+				# puts "Your HP: #{@player.current_hp}. Enemy HP: #{enemy.enemy_hp}" 
+				# puts "What do you want to do?"
+				# puts "1) Attack"
+				# puts "2) Defend"
+				# puts "3) Run"
 
 				#Player input
-				choice = gets.chomp.to_i
+				# choice = gets.chomp.to_i
 				valid_input = true
 				clear_screen
-				if choice == 1
+				if choice == "Attack"
 					#TODO: Code to attack
 					#call room #take_dmg
 					enemy.take_dmg(2)
 					puts "You damaged the enemy for x amt"
-				elsif choice == 2 
+				elsif choice == "Defend"
 					#TODO: Code to lower dmg taken
 					@player.take_dmg(-1)
 					puts "You defended"
-				elsif choice == 3
+				elsif choice == "Run"
 					#TODO: Code to run
 					@player.take_dmg(1)
 					puts "You have fled"
@@ -121,6 +123,6 @@ class Game
 	#Question is a string, choices is an array of strings
 	#Returns the choice that u made
 	def selection(question, choices)
-		prompt.select(question, choices)
+		@prompt.select(question, choices)
 	end
 end
