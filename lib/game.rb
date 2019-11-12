@@ -59,7 +59,7 @@ class Game
 		valid_input = false
 
 		while(!valid_input)
-			direction = selection("You are in room ______. Which direction would you like to choose?", ["North", "East", "South", "West"])
+			direction = selection("You are in room ______. Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
 			# puts "You are in room ___. Which direction you want to move?"
 			# puts "1) North"
 			# puts "2) East"
@@ -72,7 +72,7 @@ class Game
 
 			#Making sure the choice is valid
 			case direction 
-			when "North", "East", "South", "West"
+			when @choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]
 				valid_input = true
 			else
 				puts "Your Input is invalid, please enter again."
