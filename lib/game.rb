@@ -1,17 +1,23 @@
 class Game
 
-	def initialize(player)
-		@player = player
+	def initialize()
+		@player = Player.new({max_hp: 10, hp: 5, attack: 3, defense: 1})
 		@prompt = TTY::Prompt.new
 
 		@choice_string = {
-		start: "New Game",
+		start: "Start Game",
+		new_game: "New Game",
+		continue: "Continue",
 		highscore: "Highscore",
 		exit: "Exit",
 		n: "North",
 		e: "East",
 		s: "South",
-		w: "West"}
+		w: "West",
+		attack: "Attack",
+		defend: "Defend",
+		run: "Flee",
+		heal: "Heal"}
 	end
 
 	def dungeon_loop
@@ -35,6 +41,13 @@ class Game
 		selection("Welcome to Dummy Dungeon v0.01", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
 	end
 
+	def create_characters
+		#TODO: Ask for name, 
+		#TODO: Rnadom stats, and let user reroll
+		#TODO: Create the character (create is combined new + Save)
+		#TODO: Enter the game with the character, aka return the character
+	end
+
 	def highscore
 		
 	end
@@ -46,11 +59,17 @@ class Game
 			direction = moving
 			puts "The direction you moved is #{direction}"
 
-			new_room = Room.new({room_type: "combat", enemy_hp: 5})
-			if (new_room.room_type == "combat")
+			hp = rand(15..30)
+ 			att = rand(3..5)
+ 			defense = rand(1..2)
+			new_room = Room.all.sample
+			case new_room.room_type
+			when "combat"
 				battle(new_room)
-			else
-				"unknown room type"
+			when "friend"
+				friend(new_room)
+			when "trap"
+				obsticle(new_room)
 			end
 		end
 	end
@@ -81,13 +100,23 @@ class Game
 		direction
 	end
 
+	def friend(friend)
+		#TODO: Get heal based on room healing varible
+		puts "Entered Healing Room"
+	end
+
+	def obsticle(obsticle)
+		#TODO: Traps, takes damage
+		puts "Entered Trap ROom"
+	end
+
 	def battle(enemy)
 		puts "You encountered a name_temp"
-		while (enemy.enemy_hp > 0 && @player.current_hp > 0) 
+		while (enemy.hp > 0 && @player.hp > 0) 
 
 			valid_input = false
 			while(!valid_input)
-				choice = selection("Your HP: #{@player.current_hp}. Enemy HP: #{enemy.enemy_hp}.", ["Attack", "Defend", "Run"])
+				choice = selection("Your HP: #{@player.hp}. Enemy HP: #{enemy.hp}.", ["Attack", "Defend", "Run"])
 				# puts "Your HP: #{@player.current_hp}. Enemy HP: #{enemy.enemy_hp}" 
 				# puts "What do you want to do?"
 				# puts "1) Attack"
@@ -135,7 +164,7 @@ class Game
 	end
 
 	def still_alive?
-		@player.current_hp > 0 ? true : false
+		@player.hp > 0 ? true : false
 	end
 
 	################ Helper Functions. ###################

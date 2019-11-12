@@ -2,7 +2,7 @@ class Player < ActiveRecord::Base
 
 	#Take Damage
 	def take_dmg(amt)
-		self.current_hp -= amt
+		self.hp -= amt
 	end
 
 	#TODO: Check Death
