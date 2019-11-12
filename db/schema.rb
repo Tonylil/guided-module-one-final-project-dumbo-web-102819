@@ -15,23 +15,33 @@ ActiveRecord::Schema.define(version: 2019_11_11_194817) do
   create_table "encounters", force: :cascade do |t|
     t.integer "player_id"
     t.integer "room_id"
-    t.integer "choice"
+    t.integer "result"
+    t.integer "hp_change"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "players", force: :cascade do |t|
+    t.string "name"
+    t.string "play_class"
     t.integer "max_hp"
-    t.integer "current_hp"
-    t.integer "affinity"
+    t.integer "hp"
+    t.integer "attack"
+    t.integer "defense"
+    t.integer "heal"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "rooms", force: :cascade do |t|
-    t.integer "number"
+    t.string "name"
+    t.string "play_class"
     t.string "room_type"
-    t.integer "enemy_hp"
+    t.integer "max_hp"
+    t.integer "hp"
+    t.integer "attack"
+    t.integer "defense"
+    t.integer "heal"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
