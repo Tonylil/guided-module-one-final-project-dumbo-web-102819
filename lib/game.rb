@@ -39,7 +39,7 @@ class Game
 	def main_screen
 		clear_screen
 		puts @choice_string[:start]
-		selection("Welcome to Dummy Dungeon v0.01", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
+		selection("Welcome to Dummy Dungeon v0.01  (　＾∇＾)", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
 	end
 
 	def create_characters
@@ -127,12 +127,14 @@ class Game
 
 	def friend(friend)
 		#TODO: Get heal based on room healing varible
+		puts "(>◕ᴗ◕)> ~ <3"
 		puts "Entered Healing Room"
 	end
 
 	def obsticle(obsticle)
 		#TODO: Traps, takes damage
-		puts "Entered Trap ROom"
+		puts "༼⍨༽"
+		puts "Entered Trap Room"
 	end
 
 	def battle(enemy)
@@ -156,17 +158,24 @@ class Game
 					#TODO: Code to attack
 					#call room #take_dmg
 					enemy.take_dmg(2)
+					puts "(　-_･)σ - - - - - - - - ･"
+					puts "(∩｀-´)⊃━☆ﾟ.*･｡ﾟ"
 					puts "You damaged the enemy for x amt"
 				elsif choice == "Defend"
 					#TODO: Code to lower dmg taken
 					@player.take_dmg(-1)
+					puts "ヽ(ﾟДﾟ)ﾉ"
 					puts "You defended"
 				elsif choice == "Run"
 					#TODO: Code to run
 					@player.take_dmg(1)
+					puts "{\__/}"
+					puts "(●_●)"
+					puts "( >🌮"
 					puts "You have fled"
 					return 
 				else
+					puts "¯\_( ͡° ͜ʖ ͡°)_/¯"
 					puts "Your Input is invalid, please enter again."
 					valid_input = false
 				end
