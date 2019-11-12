@@ -3,11 +3,45 @@ class Game
 	def initialize(player)
 		@player = player
 		@prompt = TTY::Prompt.new
+
+		@choice_string = {
+		start: "New Game",
+		highscore: "Highscore",
+		exit: "Exit",
+		n: "North",
+		e: "East",
+		s: "South",
+		w: "West"}
 	end
 
 	def dungeon_loop
-		main_screen
 
+		case main_screen
+		when @choice_string[:start]
+			dungeon
+		when @choice_string[:highscore]
+			puts "Checking Highscore"
+		when @choice_string[:exit]
+			puts "Thank You for Playing, Have a Nice Day."
+		else
+			puts "Error, unknown choice"
+		end
+		#dungeon
+	end
+
+	def main_screen
+		clear_screen
+		puts @choice_string[:start]
+		selection("Welcome to Dummy Dungeon v0.01", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
+	end
+
+	def highscore
+		
+	end
+
+	################## Core Gameplay Functions ##############
+	#Move a direction, return the direction
+	def dungeon
 		while (still_alive?)
 			direction = moving
 			puts "The direction you moved is #{direction}"
@@ -21,13 +55,6 @@ class Game
 		end
 	end
 
-	def main_screen
-		clear_screen
-		puts "Welcome to Dummy Dungeon v0.01"
-	end
-
-	################## Core Gameplay Functions ##############
-	#Move a direction, return the direction
 	def moving
 		valid_input = false
 
@@ -121,6 +148,6 @@ class Game
 	#Question is a string, choices is an array of strings
 	#Returns the choice that u made
 	def selection(question, choices)
-		prompt.select(question, choices)
+		@prompt.select(question, choices)
 	end
 end
