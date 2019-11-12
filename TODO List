@@ -5,11 +5,12 @@
  - Data base
  	- Populate
  	- File talks (grab) from database
- - Getting Data from API (First Time Tomorrow)
- 	- Get names 
+ 	- Save
+ 	- Kill Amt Data
  - More Room Types
  - Main Menu
  	- New Game
+ 		- Character Creation
  	- Check HS (Terminal-Table)
  - Highscore
 
@@ -21,3 +22,7 @@ Optionals
  - Img (ASCII)
  - Google Text to Speech
  - Ethan did one (from model 3)
+
+Finished
+ - Getting Data from API (First Time Tomorrow)
+ 	- Get names 
