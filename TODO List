@@ -1,15 +1,15 @@
  Important
  - Map //create a map on the move screen
- - Battle Mechanic
  - Data base
- 	- Save
- 	- Delete Data
- - Random Room Types
- 	- Load random room from the DB
- - Character Creation
- - Highscore
+ 	- Delete Data*
+ - Encounters*
+ - Highscore*
+ - Continue*
 
 Optionals
+ - Battle Mechanic
+ 	- Friend
+ 	- Trap
  - Battle Interface (after TTY)
  - Storyline
  - Fractions and stuff
@@ -18,12 +18,16 @@ Optionals
  - Google Text to Speech
  - Ethan did one (from model 3)
  - Enemy AI
- - More Room Types
+ - Emoji
 
 Finished
+ - Random Room Types
+ 	- Load random room from the DB
+ - Character Creation
  - Battle Mechanic, attrs
  - Data base
  	- Populate
+ 	- Save
  - Getting Data from API (First Time Tomorrow)
  	- Get names 
  - TTY : Prompt //Placeall options with tty

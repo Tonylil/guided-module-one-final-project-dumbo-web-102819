@@ -24,7 +24,11 @@ class Game
 
 		case main_screen
 		when @choice_string[:start]
+			#TODO: New Game, which creates character
 			create_characters
+			#TODO: Continue, load from DB and choose one file to continue playing
+			continue_game
+			#TODO: Delete save file
 			dungeon
 		when @choice_string[:highscore]
 			puts "Checking Highscore"
@@ -62,16 +66,10 @@ class Game
 		@player = Player.create(new_hash)
 	end
 
-	
+	def continue_game
 
-	def create_stats
-		new_hash = {}
-		new_hash[:attack] = rand(1..10)
-		new_hash[:defense] = rand(1..10)
-		new_hash[:max_hp] = rand(15..30)
-		new_hash[:hp] = new_hash[:max_hp]
-		new_hash
-	end 
+	end
+
 
 	def highscore
 		
@@ -80,7 +78,7 @@ class Game
 	################## Core Gameplay Functions ##############
 	#Move a direction, return the direction
 	def dungeon
-		while (still_alive?)
+		while (still_alive? && !victory?)
 			direction = moving
 			puts "The direction you moved is #{direction}"
 
@@ -129,12 +127,16 @@ class Game
 		#TODO: Get heal based on room healing varible
 		puts "(>◕ᴗ◕)> ~ <3"
 		puts "Entered Healing Room"
+
+		#TODO: Save this encounter
 	end
 
 	def obsticle(obsticle)
 		#TODO: Traps, takes damage
+
 		puts "༼⍨༽"
 		puts "Entered Trap Room"
+		#Save conflict 
 	end
 
 	def battle(enemy)
@@ -195,10 +197,23 @@ class Game
 				end
 			end 
 		end
+
+		#TODO: Save this encounter
 	end
 
 	def still_alive?
 		@player.hp > 0 ? true : false
+	end
+
+	def victory?
+		#Return True if we beat the game winning condiction
+
+		#Return false if we haven't beat the game yet
+		false
+	end
+
+	def encounter(room, result)
+		#TODO: Create the result, and save it as a new encounter
 	end
 
 	################ Helper Functions. ###################
@@ -215,4 +230,13 @@ class Game
 	def selection(question, choices)
 		@prompt.select(question, choices)
 	end
+
+	def create_stats
+		new_hash = {}
+		new_hash[:attack] = rand(1..10)
+		new_hash[:defense] = rand(1..10)
+		new_hash[:max_hp] = rand(15..30)
+		new_hash[:hp] = new_hash[:max_hp]
+		new_hash
+	end 
 end
