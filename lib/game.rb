@@ -24,6 +24,7 @@ class Game
 
 		case main_screen
 		when @choice_string[:start]
+			create_characters
 			dungeon
 		when @choice_string[:highscore]
 			puts "Checking Highscore"
@@ -42,12 +43,35 @@ class Game
 	end
 
 	def create_characters
+		namesies = @prompt.ask("What is your name?") do |q|
+			q.required true
+			q.validate /\A\w+\Z/
+			q.modify   :capitalize
+		  end
 		#TODO: Ask for name, 
-		asdf = 14213784
-		#TODO: Rnadom stats, and let user reroll
+		stats_ok = "Whatever"
+		until stats_ok == "Happy"
+			new_hash = create_stats 
+			stats_ok = selection("Your stats are ATK #{new_hash[:attack]}, DEF #{new_hash[:defense]} and HP #{new_hash[:hp]}. Are you happy or would you like to reroll", ["Happy", "Reroll"])
+			#TODO: Rnadom stats, and let user reroll
+		end 
+		new_hash[:name] = namesies
 		#TODO: Create the character (create is combined new + Save)
+		puts "Great! #{namesies}, let's start your journey."
 		#TODO: Enter the game with the character, aka return the character
+		@player = Player.create(new_hash)
 	end
+
+	
+
+	def create_stats
+		new_hash = {}
+		new_hash[:attack] = rand(1..10)
+		new_hash[:defense] = rand(1..10)
+		new_hash[:max_hp] = rand(15..30)
+		new_hash[:hp] = new_hash[:max_hp]
+		new_hash
+	end 
 
 	def highscore
 		
@@ -79,7 +103,7 @@ class Game
 		valid_input = false
 
 		while(!valid_input)
-			direction = selection("You are in room ______. Which direction would you like to choose?", ["North", "East", "South", "West"])
+			direction = selection("You are in room ______. Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
 			# puts "You are in room ___. Which direction you want to move?"
 			# puts "1) North"
 			# puts "2) East"
@@ -92,7 +116,7 @@ class Game
 
 			#Making sure the choice is valid
 			case direction 
-			when "North", "East", "South", "West"
+			when @choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]
 				valid_input = true
 			else
 				puts "Your Input is invalid, please enter again."
