@@ -2,10 +2,11 @@ class Game
 
 	def initialize(player)
 		@player = player
+		@prompt = TTY::Prompt.new
 	end
 
 	def dungeon_loop
-		boot_up
+		main_screen
 
 		while (still_alive?)
 			direction = moving
@@ -20,7 +21,7 @@ class Game
 		end
 	end
 
-	def boot_up
+	def main_screen
 		clear_screen
 		puts "Welcome to Dummy Dungeon v0.01"
 	end
@@ -115,5 +116,11 @@ class Game
 
 	def wait(time)
 		#TODO, freeze the screen for x amt of time
+	end
+
+	#Question is a string, choices is an array of strings
+	#Returns the choice that u made
+	def selection(question, choices)
+		prompt.select(question, choices)
 	end
 end

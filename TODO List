@@ -6,11 +6,12 @@
  	- Populate
  	- File talks (grab) from database
  - Getting Data from API (First Time Tomorrow)
- 	- Get names
+ 	- Get names 
  - More Room Types
  - Main Menu
  	- New Game
- 	- Check HS
+ 	- Check HS (Terminal-Table)
+ - Highscore
 
 Optionals
  - Battle Interface (after TTY)

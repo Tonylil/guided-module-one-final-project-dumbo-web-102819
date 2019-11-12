@@ -17,6 +17,26 @@ a1 = "Attack"
 a2 = "Defend"
 a3 = "Flee"
 a4 = ["Attack", "Defend", "Flee"]
-testa = prompt.select("What do you do?", a4)
+#testa = prompt.select("What do you do?", a4)
+
+#API TEST
+#names = []
+#for amt in 1..10
+#	names << JSON.parse(Swapi.get_person(amt))["name"]
+#end
+
+#Names is gather from the API above this line.
+names = ["Luke Skywalker",
+ "C-3PO",
+ "R2-D2",
+ "Darth Vader",
+ "Leia Organa",
+ "Owen Lars",
+ "Beru Whitesun lars",
+ "R5-D4",
+ "Biggs Darklighter",
+ "Obi-Wan Kenobi"]
+#luke = Swapi.get_person 1
+#luke = JSON.parse(luke)
 
 binding.pry
