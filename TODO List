@@ -1,17 +1,12 @@
  Important
- - TTY : Prompt //Placeall options with tty
  - Map //create a map on the move screen
- - Battle Mechanic, attrs
+ - Battle Mechanic
  - Data base
- 	- Populate
- 	- File talks (grab) from database
  	- Save
- 	- Kill Amt Data
- - More Room Types
- - Main Menu
- 	- New Game
- 		- Character Creation
- 	- Check HS (Terminal-Table)
+ 	- Delete Data
+ - Random Room Types
+ 	- Load random room from the DB
+ - Character Creation
  - Highscore
 
 Optionals
@@ -22,7 +17,16 @@ Optionals
  - Img (ASCII)
  - Google Text to Speech
  - Ethan did one (from model 3)
+ - Enemy AI
+ - More Room Types
 
 Finished
+ - Battle Mechanic, attrs
+ - Data base
+ 	- Populate
  - Getting Data from API (First Time Tomorrow)
  	- Get names 
+ - TTY : Prompt //Placeall options with tty
+  - Main Menu
+ 	- New Game
+ 	- Check HS (Terminal-Table)
