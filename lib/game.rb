@@ -43,6 +43,7 @@ class Game
 
 	def create_characters
 		#TODO: Ask for name, 
+		asdf = 14213784
 		#TODO: Rnadom stats, and let user reroll
 		#TODO: Create the character (create is combined new + Save)
 		#TODO: Enter the game with the character, aka return the character
