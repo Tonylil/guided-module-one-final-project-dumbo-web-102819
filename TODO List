@@ -1,0 +1,23 @@
+ Important
+ - TTY : Prompt //Placeall options with tty
+ - Map //create a map on the move screen
+ - Battle Mechanic, attrs
+ - Data base
+ 	- Populate
+ 	- File talks (grab) from database
+ - Getting Data from API (First Time Tomorrow)
+ 	- Get names 
+ - More Room Types
+ - Main Menu
+ 	- New Game
+ 	- Check HS (Terminal-Table)
+ - Highscore
+
+Optionals
+ - Battle Interface (after TTY)
+ - Storyline
+ - Fractions and stuff
+ - Music
+ - Img (ASCII)
+ - Google Text to Speech
+ - Ethan did one (from model 3)
