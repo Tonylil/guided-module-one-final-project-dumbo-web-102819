@@ -2,13 +2,9 @@
  - Map //create a map on the move screen
  - Data base
  	- Delete Data*
- - Encounters*
  - Highscore*
 
 Optionals
- - Battle Mechanic
- 	- Friend
- 	- Trap
  - Battle Interface (after TTY)
  - Storyline
  - Fractions and stuff
@@ -18,8 +14,15 @@ Optionals
  - Ethan did one (from model 3)
  - Enemy AI
  - Emoji
+ - Battle Mechanic 
+ 	- Damage Mod
+ 	- Inspect
 
 Finished
+ - Battle Mechanic
+ 	- Friend
+ 	- Trap
+ - Encounters*
  - Continue*
  - Random Room Types
  	- Load random room from the DB
