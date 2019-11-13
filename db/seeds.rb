@@ -41,3 +41,12 @@ names = ["Luke Skywalker",
  names_combat = []
  names_friend = []
  names_trap = []
+
+
+ p1 = Player.create
+ p1.name = "Dominic"
+ p1.hp = 50
+ p1.max_hp = 50
+ p1.attack = 15
+ p1.defense = 10
+ p1.save  
