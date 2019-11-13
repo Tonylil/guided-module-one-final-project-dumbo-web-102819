@@ -31,16 +31,16 @@ class Game
 				start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
 					case start_or_continue 
 					when "Start New Game"
-						#TODO: New Game, which creates character
+						#New Game, which creates character
 						create_characters
 						dungeon
 					when "Continue from Savefile"
-						#TODO: Continue, load from DB and choose one file to continue playing
+
+						#: Continue, load from DB and choose one file to continue playing
 						if continue_game
 							dungeon
 						end
 					end
-					#TODO: Delete save file
 			when @choice_string[:highscore]
 				puts "Checking Highscore"
 				highscore
@@ -68,17 +68,19 @@ class Game
 			q.validate /\A\w+\Z/
 			q.modify   :capitalize
 		  end
-		#TODO: Ask for name, 
+		#Ask for name, 
 		stats_ok = "Whatever"
 		until stats_ok == "Happy"
 			new_hash = create_stats 
 			stats_ok = selection("Your stats are ATK #{new_hash[:attack]}, DEF #{new_hash[:defense]} and HP #{new_hash[:hp]}. Are you happy or would you like to reroll", ["Happy", "Reroll"])
-			#TODO: Rnadom stats, and let user reroll
+			#Rnadom stats, and let user reroll
 		end 
 		new_hash[:name] = namesies
-		#TODO: Create the character (create is combined new + Save)
+
+		#Create the character (create is combined new + Save)
 		puts "Great! #{namesies}, let's start your journey."
-		#TODO: Enter the game with the character, aka return the character
+
+		#Enter the game with the character, aka return the character
 		@player = Player.create(new_hash)
 	end
 
@@ -305,7 +307,7 @@ class Game
 	end
 
 	def friend(friend)
-		#TODO: Get heal based on room healing varible
+		#Get heal based on room healing varible
 		clear_screen
 
 		puts "(>◕ᴗ◕)> ~ <3"
@@ -314,29 +316,30 @@ class Game
 		if accept_help == "Yes"
 			puts "You have been healed for #{friend.heal} HP."
 			@player.get_heal(friend.heal)
+
+			timeout
 			Encounter.create({player_id: @player.id, room_id: friend.id, result: 1})
 			#### room_id == friend & result == 1 means HEALED
 		else
 			puts "You rejected #{friend.name}'s help, and told them to get a life."
+
+			timeout
 			Encounter.create({player_id: @player.id, room_id: friend.id, result: 0})
 			#### room_id == friend & result == 0 means REFUSED HEAL
 		end
-		timeout
-		
-		#TODO: Save this encounter
 	end
 
 	def obsticle(obsticle)
-		#TODO: Traps, takes damage
+		#Traps, takes damage
 		clear_screen
 
 		puts "༼⍨༽ You have triggered my trap card \"#{obsticle.name}\"."
 		puts "You take #{obsticle.attack} damage, it's super effective!"
 		@player.take_dmg(obsticle.attack)
-		Encounter.create({player_id: @player.id, room_id: obsticle.id, result: 0})
 		timeout
 
 		#Save conflict 
+		Encounter.create({player_id: @player.id, room_id: obsticle.id, result: 0})
 	end
 
 	def battle(enemy)
@@ -360,19 +363,19 @@ class Game
 				valid_input = true
 				clear_screen
 				if choice == "Attack"
-					#TODO: Code to attack
+					#Code to attack
 					#call room #take_dmg
 					enemy.take_dmg(@player.attack)
 					puts "(　-_･)σ - - - - - - - - ･"
 					puts "(∩｀-´)⊃━☆ﾟ.*･｡ﾟ"
 					puts "You damaged the enemy for #{@player.attack} amount."
 				elsif choice == "Defend"
-					#TODO: Code to lower dmg taken
+					#Code to lower dmg taken
 					@player.take_dmg(-1)
 					puts "ヽ(ﾟДﾟ)ﾉ"
 					puts "You defended"
 				elsif choice == "Run"
-					#TODO: Code to run
+					#Code to run
 					@player.take_dmg(enemy.attack)
 					puts "#{enemy.name} hits you as you try to run."
 					puts "{\__/}"
@@ -401,17 +404,21 @@ class Game
 				end
 			end 
 		end
+		
+		result = -1
 		if @player.hp <= 0
-			Encounter.create({player_id: @player.id, room_id: new_room.id, result: 0})
+
+			result = -0
 			### result = 0 is DEAD
 		elsif enemy.hp <= 0 
-			Encounter.create({player_id: @player.id, room_id: new_room.id, result: 1})
+			result = 1
 			### result = 1 ALIVE 
 		else 
-			Encounter.create({player_id: @player.id, room_id: new_room.id, result: 2})
+			result = 2
 			### result = 2 FLED
 		end 
-		#TODO: Save this encounter
+		#Save this encounter
+		Encounter.create({player_id: @player.id, room_id: new_room.id, result: result})
 	end
 
 	def still_alive?
