@@ -6,14 +6,14 @@ stuff = 'combat'
 #r1 = Room.new({enemy_hp: 5, room_type: "combat"})
 
 prompt = TTY::Prompt.new
-question = "Do you like Chicken? "
-choices = ["Yes", "No"]
-result = prompt.select(question, choices)
+# question = "Do you like Chicken? "
+# choices = ["Yes", "No"]
+# result = prompt.select(question, choices)
 #p1 = Player.new({max_hp: 10, current_hp: 5})
 
-#game = Game.new()
+game = Game.new()
 
-#game.dungeon_loop
+game.dungeon_loop
 
 #testMap = Map.new(4, 6)
 
