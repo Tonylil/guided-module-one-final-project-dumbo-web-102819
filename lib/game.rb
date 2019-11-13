@@ -38,6 +38,7 @@ class Game
 				#TODO: Delete save file
 		when @choice_string[:highscore]
 			puts "Checking Highscore"
+			highscore
 		when @choice_string[:exit]
 			puts "Thank You for Playing, Have a Nice Day."
 		else
@@ -81,16 +82,22 @@ class Game
 		puts "Last Played on #{player_instance.updated_at}"
 	end 
 	def show_all_savefiles
-		puts "Here are all of the savefiles"
-		Player.all.each do |instance|
-			puts "Savefile #{instance.id}. Name: #{instance.name}"
-		end 
+		all_players = Player.all.map do |instance|
+			instance.name
+		end
+		savefile_name = ""
+		until all_players.include?(savefile_name)
+			puts "Here are all of the savefiles"
+			Player.all.each do |instance|
+				puts "Savefile #{instance.id}. Name: #{instance.name}"
+			end 
+			savefile_name = @prompt.ask("What's your name?") do |q|
+				q.required true
+				q.validate /\A\w+\Z/
+				q.modify   :capitalize
+			end	
+		end
 
-		savefile_name = @prompt.ask("What's your name?") do |q|
-			q.required true
-			q.validate /\A\w+\Z/
-			q.modify   :capitalize
-	 	end	
 		continue_player = Player.all.find_by("name": savefile_name)
 		show_savefile(continue_player)
 		save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
@@ -137,10 +144,105 @@ class Game
 		end
 		puts "OK #{@player.name}, let's start your journey."
 	end
+	def check_leaderboards 
+		playerz = Player.all 
+		encounterz = Encounter.all
+		leaderboard_question = selection("Which category?", ["Attack", "Defense", "Max HP", "HP", "Most Kills", "Most Heals", "Most Traps", "Exit"])
+			case leaderboard_question
+			when "Attack"
+				sorted = playerz.sort_by { |instance| -instance.attack }
+				sorted.each do |instance|
+					puts "#{instance.name} : #{instance.attack} ATTACK "
+				end 
+				check_leaderboards
+			when "Defense"
+				sorted = playerz.sort_by { |instance| -instance.defense }
+				sorted.each do |instance|
+					puts "#{instance.name} : #{instance.defense} DEFENSE"
+				end
+				check_leaderboards
+			when "Max HP"
+				sorted = playerz.sort_by { |instance| -instance.max_hp }
+				sorted.each do |instance|
+					puts "#{instance.name} : #{instance.max_hp} MAX HP"
+				end 
+				check_leaderboards
+			when "HP"
+				sorted = playerz.sort_by { |instance| -instance.hp }
+				sorted.each do |instance|
+					puts "#{instance.name} : #{instance.hp} HP"
+				end 
+				check_leaderboards
+			when "Most Kills"
+				combat_rooms = Room.all.select do |room|
+					room.room_type == "combat"
+				end
+				new_hash = {}
+				combat_rooms.each do |encounter|
+					if new_hash[encounter.player_id]
+						new_hash[encounter.player_id] += 1
+					else 
+						new_hash[encounter.player_id] = 1
+					end 
+				end 
+				new_hash.sort_by { |object, value| value }
+				new_hash.each do |key, value|
+					
+					puts "Player : #{playerz[key].name} has killed #{value} enemies"
+				end 
+				check_leaderboards
+			when "Most Heals"
+				heal_rooms = Room.all.select do |room|
+					room.room_type == "friend"
+				end
+				new_hash = {}
+				heal_rooms.each do |encounter|
+					if new_hash[encounter.player_id]
+						new_hash[encounter.player_id] += 1
+					else 
+						new_hash[encounter.player_id] = 1
+					end 
+				end 
+				new_hash.sort_by { |object, value| value }
+				new_hash.each do |key, value|
+					puts "Player : #{playerz[key].name} has been healed by #{value} friends"
+				end 
+				check_leaderboards
+			when "Most Traps"
+				trap_rooms = Room.all.select do |room|
+					room.room_type == "trap"
+				end
+				new_hash = {}
+				trap_rooms.each do |encounter|
+					if new_hash[encounter.player_id]
+						new_hash[encounter.player_id] += 1
+					else 
+						new_hash[encounter.player_id] = 1
+					end 
+				end 
+				new_hash.sort_by { |object, value| value }
+				new_hash.each do |key, value|
+					puts "Player : #{playerz[key].name} has been hurt by #{value} traps"
+				end 
+				check_leaderboards
+			when "Exit"
+			end 
+		
+	end
 
 
 	def highscore
-		
+		highscore_menu_choice = selection("Hi, what would you like to do?", ["Check Leaderboard", "Check Stats", "Check Killstory"])
+		case highscore_menu_choice
+		when "Check Leaderboard"
+			check_leaderboards 
+		when "Check Stats"
+
+		when "Check Killstory"
+		else 
+			highscore
+		end 
+
 	end
 
 	################## Core Gameplay Functions ##############
