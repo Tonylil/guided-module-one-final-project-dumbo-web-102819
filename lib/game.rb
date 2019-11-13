@@ -18,6 +18,9 @@ class Game
 		defend: "Defend",
 		run: "Flee",
 		heal: "Heal"}
+
+		#making a new map
+		@game_map = Map.new(5, 8)
 	end
 
 	def dungeon_loop
@@ -143,8 +146,9 @@ class Game
 	#Move a direction, return the direction
 	def dungeon
 		while (still_alive? && !victory?)
-			direction = moving
-			puts "The direction you moved is #{direction}"
+			clear_screen
+			@game_map.show_map
+			moving
 
 			hp = rand(15..30)
  			att = rand(3..5)
@@ -170,26 +174,23 @@ class Game
 		valid_input = false
 
 		while(!valid_input)
-			direction = selection("You are in room ______. Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
-			# puts "You are in room ___. Which direction you want to move?"
-			# puts "1) North"
-			# puts "2) East"
-			# puts "3) South"
-			# puts "4) West"
-
-			# direction = gets.chomp.to_i
-
+			direction = selection("Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
 			clear_screen
-
 			#Making sure the choice is valid
 			case direction 
 			when @choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]
-				valid_input = true
+				#now check if we can move in the direction
+				if @game_map.move(direction)
+					valid_input = true
+				else
+					@game_map.show_map
+					puts "You cannot move in that direction."
+				end
 			else
+				#This shouldn't be needed
 				puts "Your Input is invalid, please enter again."
 			end 
 		end
-		direction
 	end
 
 	def friend(friend)
