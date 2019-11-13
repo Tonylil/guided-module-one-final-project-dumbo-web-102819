@@ -4,7 +4,6 @@
  	- Delete Data*
  - Encounters*
  - Highscore*
- - Continue*
 
 Optionals
  - Battle Mechanic
@@ -21,6 +20,7 @@ Optionals
  - Emoji
 
 Finished
+ - Continue*
  - Random Room Types
  	- Load random room from the DB
  - Character Creation
