@@ -202,10 +202,15 @@ class Game
 		if accept_help == "Yes"
 			puts "You have been healed for #{friend.heal} HP."
 			@player.get_heal(friend.heal)
+			Encounter.create({player_id: @player.id, room_id: friend.id, result: 1})
+			#### room_id == friend & result == 1 means HEALED
 		else
 			puts "You rejected #{friend.name}'s help, and told them to get a life."
+			Encounter.create({player_id: @player.id, room_id: friend.id, result: 0})
+			#### room_id == friend & result == 0 means REFUSED HEAL
 		end
 		timeout
+		
 		#TODO: Save this encounter
 	end
 
@@ -216,6 +221,7 @@ class Game
 		puts "༼⍨༽ You have triggered my trap card \"#{obsticle.name}\"."
 		puts "You take #{obsticle.attack} damage, it's super effective!"
 		@player.take_dmg(obsticle.attack)
+		Encounter.create({player_id: @player.id, room_id: obsticle.id, result: 0})
 		timeout
 
 		#Save conflict 
@@ -283,7 +289,16 @@ class Game
 				end
 			end 
 		end
-
+		if @player.hp <= 0
+			Encounter.create({player_id: @player.id, room_id: new_room.id, result: 0})
+			### result = 0 is DEAD
+		elsif enemy.hp <= 0 
+			Encounter.create({player_id: @player.id, room_id: new_room.id, result: 1})
+			### result = 1 ALIVE 
+		else 
+			Encounter.create({player_id: @player.id, room_id: new_room.id, result: 2})
+			### result = 2 FLED
+		end 
 		#TODO: Save this encounter
 	end
 
