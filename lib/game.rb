@@ -36,8 +36,9 @@ class Game
 						dungeon
 					when "Continue from Savefile"
 						#TODO: Continue, load from DB and choose one file to continue playing
-						continue_game
-						dungeon
+						if continue_game
+							dungeon
+						end
 					end
 					#TODO: Delete save file
 			when @choice_string[:highscore]
@@ -142,7 +143,14 @@ class Game
 		until show_all_savefiles == "Yes"
 			show_all_savefiles
 		end
-		puts "OK #{@player.name}, let's start your journey."
+		crud_savefile = selection("OK #{@player.name}, what do you want to do?", ["Continue from here", "Delete this savefile", "Exit to Main Menu"])
+		case crud_savefile 
+		when "Continue from here"
+			return true
+		when "Delete this savefile"
+			@player.destroy
+		end
+		return false
 	end
 	def check_leaderboards 
 		playerz = Player.all 
