@@ -1,4 +1,4 @@
-class Game
+class Game 
 
 	def initialize()
 		@player = Player.new({max_hp: 10, hp: 5, attack: 3, defense: 1})
@@ -24,12 +24,18 @@ class Game
 
 		case main_screen
 		when @choice_string[:start]
-			#TODO: New Game, which creates character
-			create_characters
-			#TODO: Continue, load from DB and choose one file to continue playing
-			continue_game
-			#TODO: Delete save file
-			dungeon
+			start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
+				case start_or_continue 
+				when "Start New Game"
+					#TODO: New Game, which creates character
+					create_characters
+					dungeon
+				when "Continue from Savefile"
+					#TODO: Continue, load from DB and choose one file to continue playing
+					continue_game
+					dungeon
+				end
+				#TODO: Delete save file
 		when @choice_string[:highscore]
 			puts "Checking Highscore"
 		when @choice_string[:exit]
@@ -66,8 +72,70 @@ class Game
 		@player = Player.create(new_hash)
 	end
 
-	def continue_game
+	def show_savefile(player_instance)
+		puts "Name: #{player_instance.name}"
+		puts "Attack: #{player_instance.attack}"
+		puts "Defense: #{player_instance.defense}"
+		puts "Max HP: #{player_instance.max_hp}"
+		puts "Current HP: #{player_instance.hp}"
+		puts "Last Played on #{player_instance.updated_at}"
+	end 
+	def show_all_savefiles
+		puts "Here are all of the savefiles"
+		Player.all.each do |instance|
+			puts "Savefile #{instance.id}. Name: #{instance.name}"
+		end 
 
+		savefile_name = @prompt.ask("What's your name?") do |q|
+			q.required true
+			q.validate /\A\w+\Z/
+			q.modify   :capitalize
+	 	end	
+		continue_player = Player.all.find_by("name": savefile_name)
+		show_savefile(continue_player)
+		save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
+		until save_file_yes_or_no == "Yes" 
+			puts "Here are all of the savefiles"
+			Player.all.each do |instance|
+				puts "Savefile #{instance.id}. Name: #{instance.name}"
+			end 
+			savefile_name = @prompt.ask("What's your name?") do |q|
+				q.required true
+				q.validate /\A\w+\Z/
+				q.modify   :capitalize
+		    end
+			continue_player = Player.all.find_by("name": savefile_name)
+			show_savefile(continue_player)
+			save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
+		end
+		@player = continue_player
+		"Yes"
+	end
+
+	# def ask_name_and_search_savefile
+	# 	savefile_name = @prompt.ask("What is the name on file?") do |q|
+	# 		q.required true
+	# 		q.validate /\A\w+\Z/
+	# 		q.modify   :capitalize
+	# 	end
+	
+	# 		continue_player = Player.all.find_by("name": savefile_name)
+		 
+	# 	show_savefile(continue_player)
+	# 	save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
+	# 	if save_file_yes_or_no == "Yes"
+	# 		@player = player_instance
+	# 		"Yes"
+	# 	else 
+	# 		"No, who this?"
+	# 	end 
+	# end 
+
+	def continue_game
+		until show_all_savefiles == "Yes"
+			show_all_savefiles
+		end
+		puts "OK #{@player.name}, let's start your journey."
 	end
 
 
