@@ -21,27 +21,31 @@ class Game
 	end
 
 	def dungeon_loop
-
-		case main_screen
-		when @choice_string[:start]
-			start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
-				case start_or_continue 
-				when "Start New Game"
-					#TODO: New Game, which creates character
-					create_characters
-					dungeon
-				when "Continue from Savefile"
-					#TODO: Continue, load from DB and choose one file to continue playing
-					continue_game
-					dungeon
-				end
-				#TODO: Delete save file
-		when @choice_string[:highscore]
-			puts "Checking Highscore"
-		when @choice_string[:exit]
-			puts "Thank You for Playing, Have a Nice Day."
-		else
-			puts "Error, unknown choice"
+		exit_game = false
+		while (!exit_game)
+			case main_screen
+			when @choice_string[:start]
+				start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
+					case start_or_continue 
+					when "Start New Game"
+						#TODO: New Game, which creates character
+						create_characters
+						dungeon
+					when "Continue from Savefile"
+						#TODO: Continue, load from DB and choose one file to continue playing
+						continue_game
+						dungeon
+					end
+					#TODO: Delete save file
+			when @choice_string[:highscore]
+				highscore
+			when @choice_string[:exit]
+				puts "Thank You for Playing, Have a Nice Day."
+				timeout
+				exit_game = true
+			else
+				puts "Error, unknown choice"
+			end
 		end
 		#dungeon
 	end
@@ -72,14 +76,6 @@ class Game
 		@player = Player.create(new_hash)
 	end
 
-	def show_savefile(player_instance)
-		puts "Name: #{player_instance.name}"
-		puts "Attack: #{player_instance.attack}"
-		puts "Defense: #{player_instance.defense}"
-		puts "Max HP: #{player_instance.max_hp}"
-		puts "Current HP: #{player_instance.hp}"
-		puts "Last Played on #{player_instance.updated_at}"
-	end 
 	def show_all_savefiles
 		puts "Here are all of the savefiles"
 		Player.all.each do |instance|
@@ -306,6 +302,22 @@ class Game
 		#TODO: Create the result, and save it as a new encounter
 	end
 
+	################ HIGHScore Related Functions. ###################
+	def highscore
+		array_of_choices = Player.all.map do |player|
+			player.name
+		end
+		array_of_choices << "Exit"
+
+		choice = selection("Choose whose date you want to see.", array_of_choices)
+
+		if (choice != "Exit")
+			show_savefile(Player.all.find_by(name: choice))
+			timeout
+		end
+		puts array_of_choices
+	end
+
 	################ Helper Functions. ###################
 	def clear_screen
 		system("clear")
@@ -333,4 +345,13 @@ class Game
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
 	end
+
+	def show_savefile(player_instance)
+		puts "Name: #{player_instance.name}"
+		puts "Attack: #{player_instance.attack}"
+		puts "Defense: #{player_instance.defense}"
+		puts "Max HP: #{player_instance.max_hp}"
+		puts "Current HP: #{player_instance.hp}"
+		puts "Last Played on #{player_instance.updated_at}"
+	end 
 end
