@@ -18,31 +18,39 @@ class Game
 		defend: "Defend",
 		run: "Flee",
 		heal: "Heal"}
+
+		#making a new map
+		@game_map = Map.new(5, 8)
 	end
 
 	def dungeon_loop
+		exit_game = false
+		while (!exit_game)
+			case main_screen
+			when @choice_string[:start]
+				start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
+					case start_or_continue 
+					when "Start New Game"
+						#TODO: New Game, which creates character
+						create_characters
+						dungeon
+					when "Continue from Savefile"
+						#TODO: Continue, load from DB and choose one file to continue playing
+						continue_game
+						dungeon
+					end
+					#TODO: Delete save file
+			when @choice_string[:highscore]
+				puts "Checking Highscore"
+				highscore
+			when @choice_string[:exit]
+				puts "Thank You for Playing, Have a Nice Day."
+				timeout
+				exit_game = true
+			else
+				puts "Error, unknown choice"
+			end
 
-		case main_screen
-		when @choice_string[:start]
-			start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
-				case start_or_continue 
-				when "Start New Game"
-					#TODO: New Game, which creates character
-					create_characters
-					dungeon
-				when "Continue from Savefile"
-					#TODO: Continue, load from DB and choose one file to continue playing
-					continue_game
-					dungeon
-				end
-				#TODO: Delete save file
-		when @choice_string[:highscore]
-			puts "Checking Highscore"
-			highscore
-		when @choice_string[:exit]
-			puts "Thank You for Playing, Have a Nice Day."
-		else
-			puts "Error, unknown choice"
 		end
 		#dungeon
 	end
@@ -73,14 +81,6 @@ class Game
 		@player = Player.create(new_hash)
 	end
 
-	def show_savefile(player_instance)
-		puts "Name: #{player_instance.name}"
-		puts "Attack: #{player_instance.attack}"
-		puts "Defense: #{player_instance.defense}"
-		puts "Max HP: #{player_instance.max_hp}"
-		puts "Current HP: #{player_instance.hp}"
-		puts "Last Played on #{player_instance.updated_at}"
-	end 
 	def show_all_savefiles
 		all_players = Player.all.map do |instance|
 			instance.name
@@ -249,8 +249,9 @@ class Game
 	#Move a direction, return the direction
 	def dungeon
 		while (still_alive? && !victory?)
-			direction = moving
-			puts "The direction you moved is #{direction}"
+			clear_screen
+			@game_map.show_map
+			moving
 
 			hp = rand(15..30)
  			att = rand(3..5)
@@ -276,26 +277,23 @@ class Game
 		valid_input = false
 
 		while(!valid_input)
-			direction = selection("You are in room ______. Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
-			# puts "You are in room ___. Which direction you want to move?"
-			# puts "1) North"
-			# puts "2) East"
-			# puts "3) South"
-			# puts "4) West"
-
-			# direction = gets.chomp.to_i
-
+			direction = selection("Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
 			clear_screen
-
 			#Making sure the choice is valid
 			case direction 
 			when @choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]
-				valid_input = true
+				#now check if we can move in the direction
+				if @game_map.move(direction)
+					valid_input = true
+				else
+					@game_map.show_map
+					puts "You cannot move in that direction."
+				end
 			else
+				#This shouldn't be needed
 				puts "Your Input is invalid, please enter again."
 			end 
 		end
-		direction
 	end
 
 	def friend(friend)
@@ -423,6 +421,22 @@ class Game
 		#TODO: Create the result, and save it as a new encounter
 	end
 
+	################ HIGHScore Related Functions. ###################
+	def highscore
+		array_of_choices = Player.all.map do |player|
+			player.name
+		end
+		array_of_choices << "Exit"
+
+		choice = selection("Choose whose date you want to see.", array_of_choices)
+
+		if (choice != "Exit")
+			show_savefile(Player.all.find_by(name: choice))
+			timeout
+		end
+		puts array_of_choices
+	end
+
 	################ Helper Functions. ###################
 	def clear_screen
 		system("clear")
@@ -450,4 +464,13 @@ class Game
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
 	end
+
+	def show_savefile(player_instance)
+		puts "Name: #{player_instance.name}"
+		puts "Attack: #{player_instance.attack}"
+		puts "Defense: #{player_instance.defense}"
+		puts "Max HP: #{player_instance.max_hp}"
+		puts "Current HP: #{player_instance.hp}"
+		puts "Last Played on #{player_instance.updated_at}"
+	end 
 end

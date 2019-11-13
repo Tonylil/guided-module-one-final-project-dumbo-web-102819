@@ -12,6 +12,8 @@ game = Game.new()
 
 game.dungeon_loop
 
+#testMap = Map.new(4, 6)
+
 prompt = TTY::Prompt.new
 a1 = "Attack"
 a2 = "Defend"
