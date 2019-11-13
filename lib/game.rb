@@ -418,7 +418,7 @@ class Game
 			### result = 2 FLED
 		end 
 		#Save this encounter
-		Encounter.create({player_id: @player.id, room_id: new_room.id, result: result})
+		Encounter.create({player_id: @player.id, room_id: enemy.id, result: result})
 	end
 
 	def still_alive?
