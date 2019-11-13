@@ -163,6 +163,11 @@ class Game
 				obsticle(new_room)
 			end
 		end
+
+		#If you died
+		if (!still_alive?)
+			puts "You have died."
+		end
 	end
 
 	def moving
@@ -193,22 +198,38 @@ class Game
 
 	def friend(friend)
 		#TODO: Get heal based on room healing varible
-		puts "(>◕ᴗ◕)> ~ <3"
-		puts "Entered Healing Room"
+		clear_screen
 
+		puts "(>◕ᴗ◕)> ~ <3"
+		puts "You found your friend #{friend.name}. They offer to help you."
+		accept_help = selection("Will you accept their help?", ["Yes", "No"])
+		if accept_help == "Yes"
+			puts "You have been healed for #{friend.heal} HP."
+			@player.get_heal(friend.heal)
+		else
+			puts "You rejected #{friend.name}'s help, and told them to get a life."
+		end
+		timeout
 		#TODO: Save this encounter
 	end
 
 	def obsticle(obsticle)
 		#TODO: Traps, takes damage
+		clear_screen
 
-		puts "༼⍨༽"
-		puts "Entered Trap Room"
+		puts "༼⍨༽ You have triggered my trap card \"#{obsticle.name}\"."
+		puts "You take #{obsticle.attack} damage, it's super effective!"
+		@player.take_dmg(obsticle.attack)
+		timeout
+
 		#Save conflict 
 	end
 
 	def battle(enemy)
-		puts "You encountered a name_temp"
+		clear_screen
+
+		puts "A wild #{enemy.name} has appeared."
+		puts "♪ ~ Insert Your Pokemon Theme Here ~ ♪"
 		while (enemy.hp > 0 && @player.hp > 0) 
 
 			valid_input = false
@@ -227,10 +248,10 @@ class Game
 				if choice == "Attack"
 					#TODO: Code to attack
 					#call room #take_dmg
-					enemy.take_dmg(2)
+					enemy.take_dmg(@player.attack)
 					puts "(　-_･)σ - - - - - - - - ･"
 					puts "(∩｀-´)⊃━☆ﾟ.*･｡ﾟ"
-					puts "You damaged the enemy for x amt"
+					puts "You damaged the enemy for #{@player.attack} amount."
 				elsif choice == "Defend"
 					#TODO: Code to lower dmg taken
 					@player.take_dmg(-1)
@@ -238,7 +259,8 @@ class Game
 					puts "You defended"
 				elsif choice == "Run"
 					#TODO: Code to run
-					@player.take_dmg(1)
+					@player.take_dmg(enemy.attack)
+					puts "#{enemy.name} hits you as you try to run."
 					puts "{\__/}"
 					puts "(●_●)"
 					puts "( >🌮"
@@ -254,13 +276,13 @@ class Game
 				enemy_choice = rand(1..2)
 				if enemy_choice == 1
 					#enemy attacks
-					@player.take_dmg(1)
-					puts "enemy attacked you for 1 damage"
+					@player.take_dmg(enemy.attack)
+					puts "#{enemy.name}  attacked you for #{enemy.attack} damage"
 					wait(1)
 
 				elsif enemy_choice == 2
 					#enemy looks at u
-					puts "...."
+					puts "#{enemy.name} looks up at the sky."
 					wait(1)
 				end
 			end 
@@ -293,6 +315,10 @@ class Game
 		#TODO, freeze the screen for x amt of time
 	end
 
+	def timeout
+		@prompt.keypress("Press any key to continue, resumes automatically in :countdown ...", timeout: 5)
+	end
+
 	#Question is a string, choices is an array of strings
 	#Returns the choice that u made
 	def selection(question, choices)
@@ -306,5 +332,5 @@ class Game
 		new_hash[:max_hp] = rand(15..30)
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
-	end 
+	end
 end

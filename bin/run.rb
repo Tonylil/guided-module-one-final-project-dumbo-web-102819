@@ -39,4 +39,5 @@ names = ["Luke Skywalker",
 #luke = Swapi.get_person 1
 #luke = JSON.parse(luke)
 
+
 binding.pry
