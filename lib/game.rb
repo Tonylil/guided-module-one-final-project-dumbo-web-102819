@@ -46,7 +46,7 @@ class Game
 				highscore
 			when @choice_string[:exit]
 				puts "Thank You for Playing, Have a Nice Day."
-				timeout
+				press_to_continue
 				exit_game = true
 			else
 				puts "Error, unknown choice"
@@ -317,13 +317,13 @@ class Game
 			puts "You have been healed for #{friend.heal} HP."
 			@player.get_heal(friend.heal)
 
-			timeout
+			press_to_continue
 			Encounter.create({player_id: @player.id, room_id: friend.id, result: 1})
 			#### room_id == friend & result == 1 means HEALED
 		else
 			puts "You rejected #{friend.name}'s help, and told them to get a life."
 
-			timeout
+			press_to_continue
 			Encounter.create({player_id: @player.id, room_id: friend.id, result: 0})
 			#### room_id == friend & result == 0 means REFUSED HEAL
 		end
@@ -336,7 +336,7 @@ class Game
 		puts "༼⍨༽ You have triggered my trap card \"#{obsticle.name}\"."
 		puts "You take #{obsticle.attack} damage, it's super effective!"
 		@player.take_dmg(obsticle.attack)
-		timeout
+		press_to_continue
 
 		#Save conflict 
 		Encounter.create({player_id: @player.id, room_id: obsticle.id, result: 0})
@@ -447,7 +447,7 @@ class Game
 
 		if (choice != "Exit")
 			show_savefile(Player.all.find_by(name: choice))
-			timeout
+			press_to_continue
 		end
 		puts array_of_choices
 	end
@@ -461,6 +461,11 @@ class Game
 		#TODO, freeze the screen for x amt of time
 	end
 
+	def press_to_continue
+		prompt.keypress("Press space or enter to continue", keys: [:space, :return])
+	end
+
+	#UNUSED FUNCTION
 	def timeout
 		@prompt.keypress("Press any key to continue, resumes automatically in :countdown ...", timeout: 5)
 	end
