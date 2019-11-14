@@ -95,8 +95,8 @@ end
 
 #Making combat rooms
 10.times do
-	hp = rand(30..100)
- 	att = rand(1..50)
+	hp = rand(20..80)
+ 	att = rand(1..30)
  	defense = rand(1..100)
  	Room.create!({name: poke_name.sample, room_type: "combat", max_hp: hp, hp: hp, attack: att, defense: defense})
 end
@@ -117,3 +117,11 @@ end
  p2.attack = 15
  p2.defense = 30
  p2.save  
+
+ p3 = Player.create
+ p3.name = "Cheater"
+ p3.hp = 9000
+ p3.max_hp = 9000
+ p3.attack = 150
+ p3.defense = 50
+ p3.save  
