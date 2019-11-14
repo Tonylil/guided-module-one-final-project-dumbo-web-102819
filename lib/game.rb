@@ -1,15 +1,10 @@
 class Game 
 
+
 	def initialize()
 		@player = Player.new({max_hp: 10, hp: 5, attack: 3, defense: 1})
 		@prompt = TTY::Prompt.new
-		@combat_rooms = Room.all.select { |instance| instance.room_type == "combat" }
-		@combat_ids = @combat_rooms.map { |instance| instance.id }
-		@friend_rooms = Room.all.select { |instance| instance.room_type == "friend" }
-		@friend_ids = @friend_rooms.map { |instance| instance.id }
-		@trap_rooms = Room.all.select { |instance| instance.room_type == "trap" }
-		@trap_ids = @trap_rooms.map { |instance| instance.id }
-
+		
 		@choice_string = {
 		start: "Start Game",
 		new_game: "New Game",
@@ -58,6 +53,7 @@ class Game
 					end
 			when @choice_string[:highscore]
 				puts "Checking Highscore"
+				update_room_info
 				highscore_method
 			when @choice_string[:exit]
 				puts "Thank You for Playing, Have a Nice Day."
@@ -751,4 +747,13 @@ class Game
 			"#{person.name} roars, then shoves his own head into the ground. \nIf you can't see the enemy, they don't exist right?"]
 		quotes.sample
 	end
+
+	def update_room_info
+		@combat_rooms = Room.all.select { |instance| instance.room_type == "combat" }
+		@combat_ids = @combat_rooms.map { |instance| instance.id }
+		@friend_rooms = Room.all.select { |instance| instance.room_type == "friend" }
+		@friend_ids = @friend_rooms.map { |instance| instance.id }
+		@trap_rooms = Room.all.select { |instance| instance.room_type == "trap" }
+		@trap_ids = @trap_rooms.map { |instance| instance.id }
+	end 
 end
