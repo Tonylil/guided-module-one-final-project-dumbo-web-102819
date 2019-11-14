@@ -478,9 +478,9 @@ class Game
 
 	def create_stats
 		new_hash = {}
-		new_hash[:attack] = rand(1..10)
-		new_hash[:defense] = rand(1..10)
-		new_hash[:max_hp] = rand(15..30)
+		new_hash[:attack] = rand(5..35)
+		new_hash[:defense] = rand(1..30)
+		new_hash[:max_hp] = rand(60..150)
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
 	end

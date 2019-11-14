@@ -1,9 +1,3 @@
- Important
- - Map //create a map on the move screen
- - Data base
- 	- Delete Data*
- - Highscore*
-
 Optionals
  - Battle Interface (after TTY)
  - Storyline
@@ -19,6 +13,8 @@ Optionals
  	- Inspect
 
 Finished
+ - Map //create a map on the move screen
+ - Highscore*
  - Battle Mechanic
  	- Friend
  	- Trap
@@ -31,6 +27,7 @@ Finished
  - Data base
  	- Populate
  	- Save
+ 	- Delete Data*
  - Getting Data from API (First Time Tomorrow)
  	- Get names 
  - TTY : Prompt //Placeall options with tty
