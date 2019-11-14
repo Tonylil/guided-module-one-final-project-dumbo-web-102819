@@ -34,8 +34,6 @@ class Game
 		exit_command: "Exit", 
 		defense: "Defense"}
 
-		#making a new map
-		@game_map = Map.new(5, 8)
 	end
 
 	def dungeon_loop
@@ -44,6 +42,8 @@ class Game
 			case main_screen
 			when @choice_string[:start]
 				start_or_continue = selection("What would you like to do?", [@choice_string[:start_new_game], @choice_string[:continue_from_savefile]])
+
+				@game_map = Map.new(5, 8)
 					case start_or_continue 
 					when @choice_string[:start_new_game]
 						#New Game, which creates character
@@ -61,7 +61,7 @@ class Game
 				highscore_method
 			when @choice_string[:exit]
 				puts "Thank You for Playing, Have a Nice Day."
-				press_to_continue
+				@prompt.keypress("Game will close automatically in :countdown ...", timeout: 10)
 				exit_game = true
 			else
 				puts "Error, unknown choice"
@@ -300,7 +300,7 @@ class Game
 				end 
 				check_leaderboards
 			when @choice_string[:exit_command]
-				main_screen
+				return
 			end 
 	end
 	
@@ -316,7 +316,7 @@ class Game
 		end 
 	end
 	def check_stats 
-		check_stats_choice = selection("What stat would you like to see?", ["Players", "Enemies", "Friends", "Traps"])
+		check_stats_choice = selection("What stat would you like to see?", ["Players", "Enemies", "Friends", "Traps", "Exit"])
 		case check_stats_choice
 		when "Players"
 			names = Player.all.map { |player| player.name }
@@ -361,6 +361,8 @@ class Game
 			puts "#{temp_var[0].attack} DAMAGE"
 			press_to_continue
 			check_stats 
+		when "Exit"
+			return
 		end 
 	end 
 	def check_killstory 
@@ -408,28 +410,29 @@ class Game
 	################## Core Gameplay Functions ##############
 	#Move a direction, return the direction
 	def dungeon
-		while (still_alive? && !victory?)
+		@save_quit = false
+		while (still_alive? && !victory? && !@save_quit)
 			clear_screen
 			@game_map.show_map
 			moving
 
-			hp = rand(15..30)
- 			att = rand(3..5)
- 			defense = rand(1..2)
-			new_room = Room.all.sample
-			case new_room.room_type
-			when "combat"
-				battle(new_room)
-			when "friend"
-				friend(new_room)
-			when "trap"
-				obsticle(new_room)
+			if (!@save_quit)
+				new_room = Room.all.sample
+				case new_room.room_type
+				when "combat"
+					battle(new_room)
+				when "friend"
+					friend(new_room)
+				when "trap"
+					obsticle(new_room)
+				end
 			end
 		end
 
 		#If you died
 		if (!still_alive?)
 			puts "You have died."
+			press_to_continue
 		end
 	end
 
@@ -437,7 +440,8 @@ class Game
 		valid_input = false
 
 		while(!valid_input)
-			direction = selection("Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w]])
+			puts "#{@player.name}  HP: #{@player.hp}/#{@player.max_hp} Att: #{@player.attack} Def: #{@player.defense}"
+			direction = selection("Which direction would you like to choose?", [@choice_string[:n], @choice_string[:e], @choice_string[:s], @choice_string[:w], "Quit"])
 			clear_screen
 			#Making sure the choice is valid
 			case direction 
@@ -449,6 +453,10 @@ class Game
 					@game_map.show_map
 					puts "You cannot move in that direction."
 				end
+			when "Quit"
+				@player.save
+				@save_quit = true
+				valid_input = true 
 			else
 				#This shouldn't be needed
 				puts "Your Input is invalid, please enter again."
@@ -615,9 +623,8 @@ class Game
 		@prompt.keypress("Press space or enter to continue", keys: [:space, :return])
 	end
 
-	#UNUSED FUNCTION
 	def timeout
-		@prompt.keypress("Press any key to continue, resumes automatically in :countdown ...", timeout: 5)
+		@prompt.keypress("Press any key to continue, resumes automatically in :countdown ...", timeout: 10)
 	end
 
 	#Question is a string, choices is an array of strings
@@ -628,9 +635,9 @@ class Game
 
 	def create_stats
 		new_hash = {}
-		new_hash[:attack] = rand(1..10)
-		new_hash[:defense] = rand(1..10)
-		new_hash[:max_hp] = rand(15..30)
+		new_hash[:attack] = rand(5..35)
+		new_hash[:defense] = rand(1..30)
+		new_hash[:max_hp] = rand(60..150)
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
 	end

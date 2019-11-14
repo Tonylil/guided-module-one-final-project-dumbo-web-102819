@@ -1,19 +1,20 @@
 require_relative '../config/environment'
 
-puts "lol"
-stuff = 'combat'
-
-#r1 = Room.new({enemy_hp: 5, room_type: "combat"})
-
-prompt = TTY::Prompt.new
-# question = "Do you like Chicken? "
-# choices = ["Yes", "No"]
-# result = prompt.select(question, choices)
-#p1 = Player.new({max_hp: 10, current_hp: 5})
-
 game = Game.new()
 
 game.dungeon_loop
+
+# yugioh_url = "https://db.ygoprodeck.com/api/v5/cardinfo.php?type=trap+card"
+# response = HTTParty.get(yugioh_url)
+# trap_card_names = response.map do |r|
+# 	r["name"]
+# end
+
+# puts trap_card_names
+
+
+#puts ApiData.yugioh 
+
 
 #puts Emotes.happy
 
@@ -46,5 +47,12 @@ names = ["Luke Skywalker",
 #luke = Swapi.get_person 1
 #luke = JSON.parse(luke)
 
+# names = []
+# 50.times do |t|
+# 	if t != 16
+# 		puts "T: #{t}"
+# 		names << JSON.parse(Swapi.get_person(t+1))["name"]
+# 	end
+# end
 
 binding.pry
