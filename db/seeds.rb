@@ -111,7 +111,7 @@ end
  p1.save  
 
  p2 = Player.create
- p2.name = "FanZhong"
+ p2.name = "Fanzhong"
  p2.hp = 100
  p2.max_hp = 100
  p2.attack = 15
