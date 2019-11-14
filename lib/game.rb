@@ -462,7 +462,7 @@ class Game
 	end
 
 	def press_to_continue
-		prompt.keypress("Press space or enter to continue", keys: [:space, :return])
+		@prompt.keypress("Press space or enter to continue", keys: [:space, :return])
 	end
 
 	#UNUSED FUNCTION
