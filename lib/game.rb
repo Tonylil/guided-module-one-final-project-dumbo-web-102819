@@ -506,56 +506,106 @@ class Game
 			valid_input = false
 			while(!valid_input)
 				choice = selection("Your HP: #{@player.hp}. Enemy HP: #{enemy.hp}.", ["Attack", "Defend", "Run"])
-				# puts "Your HP: #{@player.current_hp}. Enemy HP: #{enemy.enemy_hp}" 
-				# puts "What do you want to do?"
-				# puts "1) Attack"
-				# puts "2) Defend"
-				# puts "3) Run"
-
-				#Player input
-				# choice = gets.chomp.to_i
 				valid_input = true
 				clear_screen
-				if choice == "Attack"
-					#Code to attack
-					#call room #take_dmg
-					enemy.take_dmg(@player.attack)
-					puts "(　-_･)σ - - - - - - - - ･"
-					puts "(∩｀-´)⊃━☆ﾟ.*･｡ﾟ"
-					puts "You damaged the enemy for #{@player.attack} amount."
-				elsif choice == "Defend"
-					#Code to lower dmg taken
-					@player.take_dmg(-1)
-					puts "ヽ(ﾟДﾟ)ﾉ"
-					puts "You defended"
-				elsif choice == "Run"
-					#Code to run
-					@player.take_dmg(enemy.attack)
-					puts "#{enemy.name} hits you as you try to run."
-					puts "{\__/}"
-					puts "(●_●)"
-					puts "( >🌮"
-					puts "You have fled"
-					return 
-				else
-					puts "¯\_( ͡° ͜ʖ ͡°)_/¯"
-					puts "Your Input is invalid, please enter again."
-					valid_input = false
-				end
+				# if choice == "Attack"
+				# 	#Code to attack
+				# 	#call room #take_dmg
+				# 	enemy.take_dmg(@player.attack)
+				# 	puts "(　-_･)σ - - - - - - - - ･"
+				# 	puts "(∩｀-´)⊃━☆ﾟ.*･｡ﾟ"
+				# 	puts "You damaged the enemy for #{@player.attack} amount."
+				# elsif choice == "Defend"
+				# 	#Code to lower dmg taken
+				# 	@player.take_dmg(-1)
+				# 	puts "ヽ(ﾟДﾟ)ﾉ"
+				# 	puts "You defended"
+				# elsif choice == "Run"
+				# 	#Code to run
+				# 	@player.take_dmg(enemy.attack)
+				# 	puts "#{enemy.name} hits you as you try to run."
+				# 	puts "{\__/}"
+				# 	puts "(●_●)"
+				# 	puts "( >🌮"
+				# 	puts "You have fled"
+				# 	return 
+				# else
+				# 	puts "¯\_( ͡° ͜ʖ ͡°)_/¯"
+				# 	puts "Your Input is invalid, please enter again."
+				# 	valid_input = false
+				# end
+
+
 
 				#enemy AI
-				enemy_choice = rand(1..2)
-				if enemy_choice == 1
-					#enemy attacks
-					@player.take_dmg(enemy.attack)
-					puts "#{enemy.name}  attacked you for #{enemy.attack} damage"
-					wait(1)
+				enemy_choice = ["Attack", "Defend", "AFK"].sample
+				# if enemy_choice == 1
+				# 	#enemy attacks
+				# 	@player.take_dmg(enemy.attack)
+				# 	puts "#{enemy.name}  attacked you for #{enemy.attack} damage"
+				# 	wait(1)
 
-				elsif enemy_choice == 2
-					#enemy looks at u
-					puts "#{enemy.name} looks up at the sky."
-					wait(1)
+				# elsif enemy_choice == 2
+				# 	#enemy looks at u
+				# 	puts "#{enemy.name} looks up at the sky."
+				# 	wait(1)
+				# end
+
+				case choice
+				when "Attack"
+					case enemy_choice
+					when "Attack"
+						puts player_attack_quote(@player.attack, enemy)
+						puts enemy_attack_quote(enemy, @player)
+
+						enemy.take_dmg(@player.attack)
+						@player.take_dmg(enemy.attack)
+					when "Defend"
+						puts anyone_defend_quote(enemy)
+
+						player_attack_defended(@player, enemy)
+					when "AFK"
+						puts player_attack_quote(@player.attack, enemy)
+						puts enemy_afk_quote(enemy)
+
+						enemy.take_dmg(@player.attack)
+					else
+						puts "¯\\_( ͡° ͜ʖ ͡°)_/¯"
+						puts "Lol games broken, you shouldn't be here"
+					end
+				when "Defend"
+					case enemy_choice
+					when "Attack"
+						puts anyone_defend_quote(@player)
+
+						enemy_attack_defended(enemy, @player)
+					when "Defend"
+						puts anyone_defend_quote(@player)
+						puts anyone_defend_quote(enemy)
+
+						puts "\nAn hour passes by and nothing happens..."
+					when "AFK"
+						puts anyone_defend_quote(@player)
+						puts "#{enemy.name} looks at you, takes out a bag of popcorn and start eating it."
+					else
+						puts "¯\\_( ͡° ͜ʖ ͡°)_/¯"
+						puts "Lol games broken, you shouldn't be here"
+					end
+
+				when "Run"
+					@player.take_dmg(enemy.attack)
+				  	puts "#{enemy.name} hits you as you try to run."
+				 	puts "{\__/}"
+				 	puts "(●_●)"
+				 	puts "( >🌮"
+				 	puts "You have fled"
+				 	press_to_continue
+				 	return
+				else
+					puts "¯\\_( ͡° ͜ʖ ͡°)_/¯"
+					puts "You somehow fked up the choice and breaked the game."
 				end
+				press_to_continue
 			end 
 		end
 		
@@ -646,6 +696,58 @@ class Game
 		puts "Current HP: #{player_instance.hp}"
 		puts "Last Played on #{player_instance.updated_at}"
 	end 
+
+	def player_attack_quote(dmg, enemy)
+		quotes = ["You wanted to attack #{enemy.name}, except he ran and dodged your attack.\nThen he slipped and hurt himself for #{dmg} HP.",
+			"You told #{enemy.name} to look behind him, then you attacked while he wasn't looking. \n#{enemy.name} took #{dmg} damage.",
+			"You tried to attack but tripped over your own feet. Only to get up and this time trip over nothing.\n#{enemy.name} took pity on you and let you hit him for #{dmg} damage."]
+		quotes.sample
+	end
+
+	def player_attack_defended(player, enemy)
+		dmg_dealt = player.attack - enemy.defense
+		if dmg_dealt < 1
+			dmg_dealt = 1
+		end
+
+		#TODO: Future think of funny quotes
+		puts player_attack_quote(dmg_dealt,enemy)
+
+		enemy.take_dmg(dmg_dealt)
+	end
+
+	def enemy_attack_quote(enemy, player)
+		quotes = ["#{enemy.name} starts to charge at you. You go down on your knee and beg for him not to attack you. \n#{enemy.name} ignores your attempt and hits you for #{enemy.attack} damage.",
+			"You fight hard against #{enemy.name}, however #{enemy.name} was better overall.\nYou lost #{player.hp} HP.",
+			"After an intense battle between #{player.name} and #{enemy.name}. #{player.name} got distracted by a flower on the side. \n#{enemy.name} took this chance and hits #{player.name} for #{enemy.attack} damage."]
+		quotes.sample
+	end
+
+	def enemy_afk_quote(enemy)
+		quotes = ["#{enemy.name} slowly looks up at the sky, doubting his own existence.",
+			"#{enemy.name} open his mouth and wants to say something... \n30 minute passes and he just closes his mouth and act like nothing happened.",
+			"#{enemy.name} stares at you intensely."]
+		quotes.sample
+	end
+	def enemy_attack_defended(enemy, player)
+		dmg_dealt = enemy.attack - player.defense
+		if dmg_dealt < 1
+			dmg_dealt = 1
+		end
+
+		puts "You somehow still get hit for #{dmg_dealt} damage."
+
+		player.take_dmg(dmg_dealt)
+	end
+
+
+	def anyone_defend_quote(person)
+		quotes = ["#{person.name} picks up a rock on the ground, hoping to defend himself with it.",
+			"#{person.name} brace himself for the next attack.",
+			"#{person.name} roars, then shoves his own head into the ground. \nIf you can't see the enemy, they don't exist right?"]
+		quotes.sample
+	end
+
 	def update_room_info
 		@combat_rooms = Room.all.select { |instance| instance.room_type == "combat" }
 		@combat_ids = @combat_rooms.map { |instance| instance.id }

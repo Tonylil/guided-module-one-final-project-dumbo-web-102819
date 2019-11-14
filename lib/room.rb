@@ -3,6 +3,9 @@ class Room < ActiveRecord::Base
 	has_many :player, through: :encounter
 	
 	def take_dmg(amt)
+		if amt < 1
+			amt = 1
+		end
 		self.hp -= amt
 	end
 
