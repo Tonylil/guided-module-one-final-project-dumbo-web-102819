@@ -1,4 +1,6 @@
 class Player < ActiveRecord::Base
+	has_many :encounter
+	has_many :room, through: :encounter
 
 	#Take Damage
 	def take_dmg(amt)
