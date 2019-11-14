@@ -90,6 +90,7 @@ class Game
 		#Create the character (create is combined new + Save)
 		puts "(ง •̀_•́)ง"
 		puts "Great! #{namesies}, let's start your journey."
+		press_to_continue
 
 		#Enter the game with the character, aka return the character
 		@player = Player.create(new_hash)
@@ -134,25 +135,6 @@ class Game
 		@player = continue_player
 		"Yes"
 	end
-
-	# def ask_name_and_search_savefile
-	# 	savefile_name = @prompt.ask("What is the name on file?") do |q|
-	# 		q.required true
-	# 		q.validate /\A\w+\Z/
-	# 		q.modify   :capitalize
-	# 	end
-	
-	# 		continue_player = Player.all.find_by("name": savefile_name)
-		 
-	# 	show_savefile(continue_player)
-	# 	save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
-	# 	if save_file_yes_or_no == "Yes"
-	# 		@player = player_instance
-	# 		"Yes"
-	# 	else 
-	# 		"No, who this?"
-	# 	end 
-	# end 
 
 	def continue_game
 		until show_all_savefiles == "Yes"
@@ -519,48 +501,8 @@ class Game
 				choice = selection("Your HP: #{@player.hp}. Enemy HP: #{enemy.hp}.", ["Attack", "Defend", "Run"])
 				valid_input = true
 				clear_screen
-				# if choice == "Attack"
-				# 	#Code to attack
-				# 	#call room #take_dmg
-				# 	enemy.take_dmg(@player.attack)
-				# 	puts "(　-_･)σ - - - - - - - - ･"
-				# 	puts "(∩｀-´)⊃━☆ﾟ.*･｡ﾟ"
-				# 	puts "You damaged the enemy for #{@player.attack} amount."
-				# elsif choice == "Defend"
-				# 	#Code to lower dmg taken
-				# 	@player.take_dmg(-1)
-				# 	puts "ヽ(ﾟДﾟ)ﾉ"
-				# 	puts "You defended"
-				# elsif choice == "Run"
-				# 	#Code to run
-				# 	@player.take_dmg(enemy.attack)
-				# 	puts "#{enemy.name} hits you as you try to run."
-				# 	puts "{\__/}"
-				# 	puts "(●_●)"
-				# 	puts "( >🌮"
-				# 	puts "You have fled"
-				# 	return 
-				# else
-				# 	puts "¯\_( ͡° ͜ʖ ͡°)_/¯"
-				# 	puts "Your Input is invalid, please enter again."
-				# 	valid_input = false
-				# end
 
-
-
-				#enemy AI
 				enemy_choice = ["Attack", "Defend", "AFK"].sample
-				# if enemy_choice == 1
-				# 	#enemy attacks
-				# 	@player.take_dmg(enemy.attack)
-				# 	puts "#{enemy.name}  attacked you for #{enemy.attack} damage"
-				# 	wait(1)
-
-				# elsif enemy_choice == 2
-				# 	#enemy looks at u
-				# 	puts "#{enemy.name} looks up at the sky."
-				# 	wait(1)
-				# end
 
 				case choice
 				when "Attack"
@@ -692,9 +634,9 @@ class Game
 
 	def create_stats
 		new_hash = {}
-		new_hash[:attack] = rand(5..35)
+		new_hash[:attack] = rand(30..60)
 		new_hash[:defense] = rand(1..30)
-		new_hash[:max_hp] = rand(60..150)
+		new_hash[:max_hp] = rand(100..300)
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
 	end
