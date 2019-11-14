@@ -13,7 +13,19 @@ prompt = TTY::Prompt.new
 
 game = Game.new()
 
-game.dungeon_loop
+#game.dungeon_loop
+
+# yugioh_url = "https://db.ygoprodeck.com/api/v5/cardinfo.php?type=trap+card"
+# response = HTTParty.get(yugioh_url)
+# trap_card_names = response.map do |r|
+# 	r["name"]
+# end
+
+# puts trap_card_names
+
+
+#puts ApiData.yugioh 
+
 
 #puts Emotes.happy
 
@@ -46,5 +58,12 @@ names = ["Luke Skywalker",
 #luke = Swapi.get_person 1
 #luke = JSON.parse(luke)
 
+names = []
+50.times do |t|
+	if t != 16
+		puts "T: #{t}"
+		names << JSON.parse(Swapi.get_person(t+1))["name"]
+	end
+end
 
 binding.pry

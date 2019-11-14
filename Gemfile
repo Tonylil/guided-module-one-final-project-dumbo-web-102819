@@ -8,3 +8,5 @@ gem "require_all"
 gem "activerecord", "~> 5.2.3"
 gem "tty-prompt"
 gem "swapi"
+gem 'poke-api-v2'
+gem "httparty"
