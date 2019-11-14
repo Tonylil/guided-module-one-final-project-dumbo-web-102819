@@ -2,6 +2,9 @@ class Player < ActiveRecord::Base
 
 	#Take Damage
 	def take_dmg(amt)
+		if amt < 1
+			amt = 1
+		end
 		self.hp -= amt
 	end
 
