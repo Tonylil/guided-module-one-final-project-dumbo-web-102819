@@ -1,4 +1,7 @@
 class Room < ActiveRecord::Base
+	has_many :encounter
+	has_many :player, through: :encounter
+	
 	def take_dmg(amt)
 		if amt < 1
 			amt = 1

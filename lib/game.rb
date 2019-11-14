@@ -3,6 +3,12 @@ class Game
 	def initialize()
 		@player = Player.new({max_hp: 10, hp: 5, attack: 3, defense: 1})
 		@prompt = TTY::Prompt.new
+		@combat_rooms = Room.all.select { |instance| instance.room_type == "combat" }
+		@combat_ids = @combat_rooms.map { |instance| instance.id }
+		@friend_rooms = Room.all.select { |instance| instance.room_type == "friend" }
+		@friend_ids = @friend_rooms.map { |instance| instance.id }
+		@trap_rooms = Room.all.select { |instance| instance.room_type == "trap" }
+		@trap_ids = @trap_rooms.map { |instance| instance.id }
 
 		@choice_string = {
 		start: "Start Game",
@@ -17,7 +23,17 @@ class Game
 		attack: "Attack",
 		defend: "Defend",
 		run: "Flee",
-		heal: "Heal"}
+		heal: "Heal",
+		start_new_game: "Start New Game",
+		continue_from_savefile: "Continue from Savefile",
+		max_hp: "Max HP",
+		hp: "HP",
+		most_kills: "Most Kills",
+		most_heals: "Most Heals",
+		most_traps: "Most Traps",
+		exit_command: "Exit", 
+		defense: "Defense"}
+
 	end
 
 	def dungeon_loop
@@ -25,14 +41,15 @@ class Game
 		while (!exit_game)
 			case main_screen
 			when @choice_string[:start]
-				start_or_continue = selection("What would you like to do?", ["Start New Game", "Continue from Savefile"])
+				start_or_continue = selection("What would you like to do?", [@choice_string[:start_new_game], @choice_string[:continue_from_savefile]])
+
 				@game_map = Map.new(5, 8)
 					case start_or_continue 
-					when "Start New Game"
+					when @choice_string[:start_new_game]
 						#New Game, which creates character
 						create_characters
 						dungeon
-					when "Continue from Savefile"
+					when @choice_string[:continue_from_savefile]
 
 						#: Continue, load from DB and choose one file to continue playing
 						if continue_game
@@ -41,7 +58,7 @@ class Game
 					end
 			when @choice_string[:highscore]
 				puts "Checking Highscore"
-				highscore
+				highscore_method
 			when @choice_string[:exit]
 				puts "Thank You for Playing, Have a Nice Day."
 				@prompt.keypress("Game will close automatically in :countdown ...", timeout: 10)
@@ -56,7 +73,6 @@ class Game
 
 	def main_screen
 		clear_screen
-		puts @choice_string[:start]
 		selection("Welcome to Dummy Dungeon v0.01  (　＾∇＾)", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
 	end
 
@@ -152,106 +168,244 @@ class Game
 		end
 		return false
 	end
+
 	def check_leaderboards 
 		playerz = Player.all 
 		encounterz = Encounter.all
-		leaderboard_question = selection("Which category?", ["Attack", "Defense", "Max HP", "HP", "Most Kills", "Most Heals", "Most Traps", "Exit"])
-			case leaderboard_question
-			when "Attack"
+			case selection("Which category?", [@choice_string[:attack], @choice_string[:defense], @choice_string[:max_hp], @choice_string[:hp], @choice_string[:most_kills], @choice_string[:most_heals], @choice_string[:most_traps], @choice_string[:exit_command]])
+			when @choice_string[:attack]
 				sorted = playerz.sort_by { |instance| -instance.attack }
 				sorted.each do |instance|
 					puts "#{instance.name} : #{instance.attack} ATTACK "
 				end 
 				check_leaderboards
-			when "Defense"
+			when @choice_string[:defense]
 				sorted = playerz.sort_by { |instance| -instance.defense }
 				sorted.each do |instance|
 					puts "#{instance.name} : #{instance.defense} DEFENSE"
 				end
 				check_leaderboards
-			when "Max HP"
+			when @choice_string[:max_hp]
 				sorted = playerz.sort_by { |instance| -instance.max_hp }
 				sorted.each do |instance|
 					puts "#{instance.name} : #{instance.max_hp} MAX HP"
 				end 
 				check_leaderboards
-			when "HP"
+			when @choice_string[:hp]
 				sorted = playerz.sort_by { |instance| -instance.hp }
 				sorted.each do |instance|
 					puts "#{instance.name} : #{instance.hp} HP"
 				end 
 				check_leaderboards
-			when "Most Kills"
+			when @choice_string[:most_kills]
+				new_array = Array.new
+				#to use later
+				new_hash = Hash.new
+				#to store encounter count per player
 				combat_rooms = Room.all.select do |room|
 					room.room_type == "combat"
 				end
-				new_hash = {}
-				combat_rooms.each do |encounter|
+				#filter out only combat rooms
+				combat_ids = combat_rooms.map do |combat_room|
+					combat_room.id 
+				end 
+				#map to just ids
+				combat_encounters = Encounter.all.select do |encounter|
+					combat_ids.include?(encounter.room_id)
+				end 
+				#select all encounters with room_id that are combat types
+				combat_encounters.each do |encounter|
 					if new_hash[encounter.player_id]
 						new_hash[encounter.player_id] += 1
 					else 
 						new_hash[encounter.player_id] = 1
 					end 
+					#in the counting hash add counts per player_id
 				end 
-				new_hash.sort_by { |object, value| value }
 				new_hash.each do |key, value|
-					
-					puts "Player : #{playerz[key].name} has killed #{value} enemies"
+					#going through the counting hash and selecting the applicable players
+					current_player_instance_array = Player.all.select do |instance|
+						instance.id == key
+					end
+					new_array << "#{value} Enemies killed by #{current_player_instance_array[0].name}"
+					# shoveling into an array, the number of encounters w/player name
+				end 
+				sorted_array = new_array.sort.reverse
+				#sort in reverse the array so that 9 is before 8 etc like in a ranking high-to-low
+				sorted_array.each do |item|
+					puts item 
+					#puts all in order from high to low the top players for this encounter type
 				end 
 				check_leaderboards
-			when "Most Heals"
+			when @choice_string[:most_heals]
+				new_array = Array.new
+				new_hash = Hash.new
 				heal_rooms = Room.all.select do |room|
 					room.room_type == "friend"
 				end
-				new_hash = {}
-				heal_rooms.each do |encounter|
+				friend_ids = heal_rooms.map do |heal_room|
+					heal_room.id 
+				end 
+				heal_encounters = Encounter.all.select do |encounter|
+					friend_ids.include?(encounter.room_id)
+				end 
+				heal_encounters.each do |encounter|
 					if new_hash[encounter.player_id]
 						new_hash[encounter.player_id] += 1
-					else 
+					else
 						new_hash[encounter.player_id] = 1
 					end 
 				end 
 				new_hash.sort_by { |object, value| value }
 				new_hash.each do |key, value|
-					puts "Player : #{playerz[key].name} has been healed by #{value} friends"
+					current_player_instance_array = Player.all.select do |instance|
+						instance.id == key
+					end 
+					new_array << "#{value} Friends encountered by #{current_player_instance_array[0].name}"
+				end 
+				sorted_array = new_array.sort.reverse
+				sorted_array.each do |item|
+					puts item 
 				end 
 				check_leaderboards
-			when "Most Traps"
+			when @choice_string[:most_traps]
+				new_array = Array.new
+				new_hash = Hash.new
 				trap_rooms = Room.all.select do |room|
 					room.room_type == "trap"
 				end
-				new_hash = {}
-				trap_rooms.each do |encounter|
+				trap_ids = trap_rooms.map do |trap_room|
+					trap_room.id 
+				end 
+				trap_encounters = Encounter.all.select do |encounter|
+					trap_ids.include?(encounter.room_id)
+				end 
+				trap_encounters.each do |encounter|
 					if new_hash[encounter.player_id]
 						new_hash[encounter.player_id] += 1
-					else 
+					else
 						new_hash[encounter.player_id] = 1
 					end 
 				end 
 				new_hash.sort_by { |object, value| value }
 				new_hash.each do |key, value|
-					puts "Player : #{playerz[key].name} has been hurt by #{value} traps"
+					current_player_instance_array = Player.all.select do |instance|
+						instance.id == key
+					end 
+					new_array << "#{value} Traps encountered by #{current_player_instance_array[0].name}"
+				end 
+				sorted_array = new_array.sort.reverse
+				sorted_array.each do |item|
+					puts item 
 				end 
 				check_leaderboards
-			when "Exit"
+			when @choice_string[:exit_command]
+				return
 			end 
-		
 	end
+	
 
-
-	def highscore
-		highscore_menu_choice = selection("Hi, what would you like to do?", ["Check Leaderboard", "Check Stats", "Check Killstory"])
-		case highscore_menu_choice
+	def highscore_method
+		case selection("Hi, what would you like to do?", ["Check Leaderboard", "Check Stats", "Check Killstory"])
 		when "Check Leaderboard"
 			check_leaderboards 
 		when "Check Stats"
-
+			check_stats
 		when "Check Killstory"
-		else 
-			highscore
+			check_killstory 
 		end 
-
 	end
+	def check_stats 
+		check_stats_choice = selection("What stat would you like to see?", ["Players", "Enemies", "Friends", "Traps", "Exit"])
+		case check_stats_choice
+		when "Players"
+			names = Player.all.map { |player| player.name }
+			choice_name = selection("Which player's details would you like to see?", names)
+			temp_var = Player.all.select { |player| player.name == choice_name }
+			puts "#{temp_var[0].name}"
+			puts "#{temp_var[0].attack} ATTACK"
+			puts "#{temp_var[0].defense} DEFENSE"
+			puts "#{temp_var[0].hp} HP"
+			puts "#{temp_var[0].max_hp} MAX_HP"
+			puts "#{temp_var[0].created_at} CREATED AT"
+			puts "#{temp_var[0].updated_at} LAST PLAYED"
+			press_to_continue
+			check_stats  
+		when "Enemies"
+			roomz = Room.all.select { |room| room.room_type == "combat"}
+			names = roomz.map { |room| room.name }
+			choice_name = selection("Which Enemy's details would you like to see?", names)
+			temp_var = Room.all.select { |player| player.name == choice_name }
+			puts "#{temp_var[0].name}"
+			puts "#{temp_var[0].attack} ATTACK"
+			puts "#{temp_var[0].defense} DEFENSE"
+			puts "#{temp_var[0].hp} HP"
+			puts "#{temp_var[0].max_hp} MAX_HP"
+			press_to_continue
+			check_stats  
+		when "Friends"
+			roomz = Room.all.select { |room| room.room_type == "friend"}
+			names = roomz.map { |room| room.name }
+			choice_name = selection("Which Friendly's details would you like to see?", names)
+			temp_var = Room.all.select { |player| player.name == choice_name }
+			puts "#{temp_var[0].name}"
+			puts "#{temp_var[0].heal} HEALING FACTOR"
+			press_to_continue
+			check_stats  
+		when "Traps"
+			roomz = Room.all.select { |room| room.room_type == "trap"}
+			names = roomz.map { |room| room.name }
+			choice_name = selection("Which Trap's details would you like to see?", names)
+			temp_var = Room.all.select { |player| player.name == choice_name }
+			puts "#{temp_var[0].name}"
+			puts "#{temp_var[0].attack} DAMAGE"
+			press_to_continue
+			check_stats 
+		when "Exit"
+			return
+		end 
+	end 
+	def check_killstory 
+		names = Player.all.map { |player| player.name }
+		choice_name = selection("Which player's Kill History would you like to see?", names)
+		temp_var = Player.all.select { |player| player.name == choice_name }
+		specific_encounters = Encounter.all.select do |instance|
+			instance.player_id == temp_var[0].id
+		end 
+		sorted_enc = specific_encounters.sort_by { |object| object.created_at}
+		sorted_enc.each do |instance|
+			temp_yo = Room.all.select { |room| room.id == instance.room_id }
+			### assigns the room to temp_yo.... switching from Encounter to Room dataset
+			
+			if @combat_ids.include?(instance.room_id)
+				case instance.result
+				when 0
+					# _____ killed player
+					puts "#{temp_yo[0].name} killed #{temp_var[0].name} "
+				when 1
+					# player killed _____ 
+					puts "#{temp_var[0].name} killed #{temp_yo[0].name}"
+				when 2
+					# player ran from _____
+					puts "#{temp_var[0].name} ran like a coward from #{temp_yo[0].name}"
+				end 
+			elsif @friend_ids.include?(instance.room_id)
+				case instance.result
+				when 0
+					# refused help
+					puts "#{temp_var[0].name} refused sweet sensual healing from #{temp_yo[0].name}"
+				when 1
+					# accepted help
+					puts "#{temp_var[0].name} accepted sweet sensual healing from #{temp_yo[0].name}"
+				end 
+			elsif @trap_ids.include?(instance.room_id)
+				## trap always hits 
+				puts "#{temp_var[0].name} took nefarious damage from #{temp_yo[0].name}"
+			end 
+		end 
+		press_to_continue
+	end
+
 
 	################## Core Gameplay Functions ##############
 	#Move a direction, return the direction
