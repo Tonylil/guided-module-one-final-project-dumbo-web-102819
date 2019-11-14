@@ -100,38 +100,36 @@ class Game
 			instance.name
 		end
 		savefile_name = ""
-		until all_players.include?(savefile_name)
-			puts "Here are all of the savefiles"
-			Player.all.each do |instance|
-				puts "Savefile #{instance.id}. Name: #{instance.name}"
-			end 
+		in_the_game = false
+		while (!in_the_game)
+			#Making sure if the player chooses a name that exist
+			until all_players.include?(savefile_name)
+				puts "Here are all of the savefiles"
+				Player.all.each do |instance|
+					puts "Savefile #{instance.id}. Name: #{instance.name}"
+				end 
+				savefile_name = @prompt.ask("What's your name?") do |q|
+					q.required true
+					q.validate /\A\w+\Z/
+					q.modify   :capitalize
+				end	
 
-			savefile_name = @prompt.ask("What's your name?") do |q|
-				q.required true
-				q.validate /\A\w+\Z/
-				q.modify   :capitalize
-			end	
-			
-		end
-		puts "TESSSSSSSSSTTTTTING"
-		puts savefile_name 
-		puts all_players.include?(savefile_name)
-		continue_player = Player.all.find_by("name": savefile_name)
-		show_savefile(continue_player)
-		save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
-		until save_file_yes_or_no == "Yes" 
-			puts "Here are all of the savefiles"
-			Player.all.each do |instance|
-				puts "Savefile #{instance.id}. Name: #{instance.name}"
-			end 
-			savefile_name = @prompt.ask("What's your name?") do |q|
-				q.required true
-				q.validate /\A\w+\Z/
-				q.modify   :capitalize
-		    end
+				if (!all_players.include?(savefile_name))
+					clear_screen
+					puts "Error Player doesn't exist, please enter again: "
+				end
+
+			end
 			continue_player = Player.all.find_by("name": savefile_name)
 			show_savefile(continue_player)
 			save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
+
+			if save_file_yes_or_no == "Yes"
+				in_the_game = true
+			else
+				savefile_name = ""
+			end
+			clear_screen
 		end
 		@player = continue_player
 		"Yes"
