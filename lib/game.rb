@@ -88,6 +88,7 @@ class Game
 		new_hash[:name] = namesies
 
 		#Create the character (create is combined new + Save)
+		puts "(ง •̀_•́)ง"
 		puts "Great! #{namesies}, let's start your journey."
 
 		#Enter the game with the character, aka return the character
@@ -104,13 +105,17 @@ class Game
 			Player.all.each do |instance|
 				puts "Savefile #{instance.id}. Name: #{instance.name}"
 			end 
+
 			savefile_name = @prompt.ask("What's your name?") do |q|
 				q.required true
 				q.validate /\A\w+\Z/
 				q.modify   :capitalize
 			end	
+			
 		end
-
+		puts "TESSSSSSSSSTTTTTING"
+		puts savefile_name 
+		puts all_players.include?(savefile_name)
 		continue_player = Player.all.find_by("name": savefile_name)
 		show_savefile(continue_player)
 		save_file_yes_or_no = selection("Is this your savefile?", ["Yes", "No, who this?"])
@@ -160,7 +165,15 @@ class Game
 		when "Continue from here"
 			return true
 		when "Delete this savefile"
+			encounters_to_axe = Encounter.all.select do |instance|
+				instance.player_id == @player.id
+			end 
+			encounters_to_axe.each do |instance|
+				instance.destroy
+			end 
 			@player.destroy
+			puts "You have deleted this savefile and all encounters related to it."
+			press_to_continue
 		end
 		return false
 	end
