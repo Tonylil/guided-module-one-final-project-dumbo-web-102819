@@ -15,6 +15,8 @@ game = Game.new()
 
 game.dungeon_loop
 
+#puts Emotes.happy
+
 #testMap = Map.new(4, 6)
 
 prompt = TTY::Prompt.new
