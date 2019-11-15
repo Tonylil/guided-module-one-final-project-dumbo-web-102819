@@ -69,7 +69,11 @@ class Game
 
 	def main_screen
 		clear_screen
-		selection("Welcome to Dummy Dungeon v0.01  (　＾∇＾)", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
+		puts " ^---^  |"
+		puts "(O * O) |"
+		puts "( *  *) |"
+		puts "(     ) |"
+		selection("Welcome to Dummy Dungeon v0.01", [@choice_string[:start], @choice_string[:highscore], @choice_string[:exit]])
 	end
 
 	def create_characters
