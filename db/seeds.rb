@@ -94,7 +94,7 @@ poke_name = poke.results.map do |p|
 end
 
 #Making combat rooms
-10.times do
+15.times do
 	hp = rand(20..80)
  	att = rand(1..30)
  	defense = rand(1..100)

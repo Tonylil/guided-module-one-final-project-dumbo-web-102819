@@ -20,11 +20,11 @@ game.dungeon_loop
 
 #testMap = Map.new(4, 6)
 
-prompt = TTY::Prompt.new
-a1 = "Attack"
-a2 = "Defend"
-a3 = "Flee"
-a4 = ["Attack", "Defend", "Flee"]
+#prompt = TTY::Prompt.new
+#a1 = "Attack"
+#a2 = "Defend"
+#a3 = "Flee"
+#a4 = ["Attack", "Defend", "Flee"]
 #testa = prompt.select("What do you do?", a4)
 
 #API TEST
@@ -34,16 +34,16 @@ a4 = ["Attack", "Defend", "Flee"]
 #end
 
 #Names is gather from the API above this line.
-names = ["Luke Skywalker",
- "C-3PO",
- "R2-D2",
- "Darth Vader",
- "Leia Organa",
- "Owen Lars",
- "Beru Whitesun lars",
- "R5-D4",
- "Biggs Darklighter",
- "Obi-Wan Kenobi"]
+#names = ["Luke Skywalker",
+# "C-3PO",
+# "R2-D2",
+# "Darth Vader",
+# "Leia Organa",
+# "Owen Lars",
+# "Beru Whitesun lars",
+# "R5-D4",
+# "Biggs Darklighter",
+# "Obi-Wan Kenobi"]
 #luke = Swapi.get_person 1
 #luke = JSON.parse(luke)
 
@@ -55,4 +55,4 @@ names = ["Luke Skywalker",
 # 	end
 # end
 
-binding.pry
+#binding.pry
