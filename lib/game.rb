@@ -38,7 +38,7 @@ class Game
 			when @choice_string[:start]
 				start_or_continue = selection("What would you like to do?", [@choice_string[:start_new_game], @choice_string[:continue_from_savefile]])
 
-				@game_map = Map.new(5, 8)
+				@game_map = Map.new(7, 11)
 					case start_or_continue 
 					when @choice_string[:start_new_game]
 						#New Game, which creates character
@@ -564,16 +564,21 @@ class Game
 		
 		result = -1
 		if @player.hp <= 0
-
+			"#{@player.name} has blacked out."
 			result = -0
 			### result = 0 is DEAD
 		elsif enemy.hp <= 0 
+			puts "#{enemy.name} has been defeated. You should be proud of yourself!"
+			press_to_continue
+			puts "However you feel just as empty as before."
 			result = 1
 			### result = 1 ALIVE 
 		else 
 			result = 2
 			### result = 2 FLED
 		end 
+
+		press_to_continue
 		#Save this encounter
 		Encounter.create({player_id: @player.id, room_id: enemy.id, result: result})
 	end
@@ -636,7 +641,7 @@ class Game
 		new_hash = {}
 		new_hash[:attack] = rand(30..60)
 		new_hash[:defense] = rand(1..30)
-		new_hash[:max_hp] = rand(100..300)
+		new_hash[:max_hp] = rand(300..400)
 		new_hash[:hp] = new_hash[:max_hp]
 		new_hash
 	end
